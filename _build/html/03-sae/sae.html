@@ -353,6 +353,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tuesday-4-30-24">Tuesday 4/30/24</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thursday-5-2-24">Thursday 5/2/24</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#monday-5-6-24">Monday 5/6/24</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tuesday-5-7-24">Tuesday 5/7/24</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#messy-from-here-on">Messy from here on</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hf-dataset">HF dataset</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gelu-model">GELU Model</a></li>
@@ -635,8 +636,13 @@ SAE output shape: torch.Size([3, 7, 2048])
     <span class="n">tokenized_row</span><span class="p">[</span><span class="s1">&#39;attention_mask&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">pad_length</span>
     <span class="n">tokenized_row</span><span class="p">[</span><span class="s1">&#39;token_type_ids&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">pad_length</span>
     <span class="k">return</span> <span class="n">tokenized_row</span>
-
-<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">train_text</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">process_row</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">train_text</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">process_row</span><span class="p">)</span>
 <span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">device</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;mps&#39;</span><span class="p">)</span>
@@ -1014,7 +1020,7 @@ Moving model to device:  mps
         <span class="k">return</span> <span class="n">acts_reconstructed</span>
     
     <span class="k">def</span> <span class="nf">get_act_mse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mlp_acts_reconstructed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp_acts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mlp_acts_reconstructed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp_acts</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
 
 <span class="k">def</span> <span class="nf">run_with_sae</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sae</span><span class="p">,</span> <span class="n">input_tokens</span><span class="p">,</span> <span class="n">sae_act_tracker</span><span class="p">):</span>
     <span class="n">hook_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">sae_act_tracker</span><span class="o">.</span><span class="n">reconstruction_hook</span><span class="p">,</span> <span class="n">sae</span><span class="o">=</span><span class="n">sae</span><span class="p">)</span>
@@ -1120,9 +1126,51 @@ Input: Ġincredible	Original top 5:[&#39; and&#39;, &#39; work&#39;, &#39;Hello&
 </div>
 </div>
 </div>
+</section>
+<section id="tuesday-5-7-24">
+<h2>Tuesday 5/7/24<a class="headerlink" href="#tuesday-5-7-24" title="Link to this heading">#</a></h2>
+<p>Simple reconstruction / cross-entropy eval with batches.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">eval_sae_full_batch</span><span class="p">(</span><span class="n">sae</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="n">max_length</span> <span class="o">=</span> <span class="mi">64</span>
+
+<span class="k">def</span> <span class="nf">process_row</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="n">tokenized_row</span> <span class="o">=</span> <span class="n">gelu_model</span><span class="o">.</span><span class="n">tokenizer</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">],</span> <span class="n">max_length</span><span class="o">=</span><span class="n">max_length</span><span class="p">)</span>
+    <span class="n">pad_length</span> <span class="o">=</span> <span class="n">max_length</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokenized_row</span><span class="p">[</span><span class="s1">&#39;input_ids&#39;</span><span class="p">])</span>
+    <span class="n">tokenized_row</span><span class="p">[</span><span class="s1">&#39;input_ids&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">gelu_model</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">pad_token_id</span><span class="p">]</span> <span class="o">*</span> <span class="n">pad_length</span>
+    <span class="n">tokenized_row</span><span class="p">[</span><span class="s1">&#39;attention_mask&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">pad_length</span>
+    <span class="n">tokenized_row</span><span class="p">[</span><span class="s1">&#39;token_type_ids&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">pad_length</span>
+    <span class="k">return</span> <span class="n">tokenized_row</span>
+
+<span class="k">def</span> <span class="nf">eval_sae_batch</span><span class="p">(</span><span class="n">sae</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">256</span><span class="p">):</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="n">sae</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">gelu_model</span><span class="o">.</span><span class="n">load_sample_training_dataset</span><span class="p">()</span>
+    <span class="n">eval_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">process_row</span><span class="p">)</span>
+    <span class="n">eval_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">eval_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sae_act_tracker</span> <span class="o">=</span> <span class="n">SAEActivationTracker</span><span class="p">()</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">eval_dataloader</span><span class="p">))[</span><span class="s1">&#39;input_ids&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">logits</span> <span class="o">=</span> <span class="n">gelu_model</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+    <span class="n">logits_sae</span> <span class="o">=</span> <span class="n">run_with_sae</span><span class="p">(</span><span class="n">gelu_model</span><span class="p">,</span> <span class="n">sae</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">sae_act_tracker</span><span class="p">)</span>
+    <span class="n">crossentropy</span> <span class="o">=</span> <span class="n">get_crossentropy</span><span class="p">(</span><span class="n">logits_sae</span><span class="p">,</span> <span class="n">logits</span><span class="p">)</span>
+    <span class="n">act_mse</span> <span class="o">=</span> <span class="n">sae_act_tracker</span><span class="o">.</span><span class="n">get_act_mse</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MSE of MLP activation reconstruction: </span><span class="si">{</span><span class="n">act_mse</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Logit cross-entropy: </span><span class="si">{</span><span class="n">crossentropy</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eval_sae_batch</span><span class="p">(</span><span class="n">sae</span><span class="p">,</span> <span class="n">gelu_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "97b05854bc76473897ec37839b1e0362", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MSE of MLP activation reconstruction: 0.05424727499485016
+Logit cross-entropy: 3.7227911949157715
 </pre></div>
 </div>
 </div>
@@ -1131,6 +1179,8 @@ Input: Ġincredible	Original top 5:[&#39; and&#39;, &#39; work&#39;, &#39;Hello&
 <hr class="docutils" />
 <section id="messy-from-here-on">
 <h2>Messy from here on<a class="headerlink" href="#messy-from-here-on" title="Link to this heading">#</a></h2>
+<section id="hf-dataset">
+<h3>HF dataset<a class="headerlink" href="#hf-dataset" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">t</span>
@@ -1140,8 +1190,6 @@ Input: Ġincredible	Original top 5:[&#39; and&#39;, &#39; work&#39;, &#39;Hello&
 </div>
 </div>
 </div>
-<section id="hf-dataset">
-<h3>HF dataset<a class="headerlink" href="#hf-dataset" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span>
@@ -3516,6 +3564,7 @@ Input: Ġincredible	Original top 5:[&#39; and&#39;, &#39; work&#39;, &#39;Hello&
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tuesday-4-30-24">Tuesday 4/30/24</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thursday-5-2-24">Thursday 5/2/24</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#monday-5-6-24">Monday 5/6/24</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tuesday-5-7-24">Tuesday 5/7/24</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#messy-from-here-on">Messy from here on</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hf-dataset">HF dataset</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gelu-model">GELU Model</a></li>
