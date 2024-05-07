@@ -934,7 +934,7 @@ Input: Ġincredible	Original top 5:[&#39; and&#39;, &#39; work&#39;, &#39;Hello&
 <span class="n">sae_hidden_dim</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">sae_input_dim</span>
 <span class="n">sae_output_dim</span> <span class="o">=</span> <span class="n">sae_input_dim</span>
 
-<span class="k">class</span> <span class="nc">SAE</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SAEBaseline</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                  <span class="n">input_dim</span><span class="o">=</span><span class="n">sae_input_dim</span><span class="p">,</span>
@@ -1075,13 +1075,12 @@ Moving model to device:  mps
     <span class="k">for</span> <span class="n">test_feature_index</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">sae_hidden_dim</span><span class="p">)):</span>
         <span class="n">test_feature</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">sae_hidden_dim</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="n">test_feature</span><span class="p">[</span><span class="n">test_feature_index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">test_feature</span><span class="o">.</span><span class="n">unsqueeze_</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
+        <span class="n">test_feature</span> <span class="o">=</span> <span class="n">einops</span><span class="o">.</span><span class="n">rearrange</span><span class="p">(</span><span class="n">test_feature</span><span class="p">,</span> <span class="s1">&#39;d_sae -&gt; 1 1 d_sae&#39;</span><span class="p">)</span>
         <span class="n">test_mlp_activation</span> <span class="o">=</span> <span class="n">sae</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">test_feature</span><span class="p">)</span>
         <span class="n">encoded_features</span> <span class="o">=</span> <span class="n">sae</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">test_mlp_activation</span><span class="p">)</span>
-        <span class="n">max_ratio</span> <span class="o">=</span> <span class="n">encoded_features</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">test_feature_index</span><span class="p">]</span><span class="o">/</span><span class="n">encoded_features</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-        <span class="n">mean_ratio</span> <span class="o">=</span> <span class="n">encoded_features</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">test_feature_index</span><span class="p">]</span><span class="o">/</span><span class="n">encoded_features</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-        <span class="n">square_ratio</span> <span class="o">=</span> <span class="n">encoded_features</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">test_feature_index</span><span class="p">]</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">encoded_features</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">max_ratio</span> <span class="o">=</span> <span class="n">encoded_features</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="n">test_feature_index</span><span class="p">]</span><span class="o">/</span><span class="n">encoded_features</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">mean_ratio</span> <span class="o">=</span> <span class="n">encoded_features</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">test_feature_index</span><span class="p">]</span><span class="o">/</span><span class="n">encoded_features</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">square_ratio</span> <span class="o">=</span> <span class="n">encoded_features</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">test_feature_index</span><span class="p">]</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">encoded_features</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
         <span class="n">max_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">max_ratio</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
         <span class="n">mean_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean_ratio</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
         <span class="n">square_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">square_ratio</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
@@ -1195,7 +1194,7 @@ Logit cross-entropy: 6.156724452972412
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">sae</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">SAETrainingArgs</span><span class="p">()):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sae</span> <span class="o">=</span> <span class="n">sae</span> <span class="ow">or</span> <span class="n">SAE</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sae</span> <span class="o">=</span> <span class="n">sae</span> <span class="ow">or</span> <span class="n">SAEBaseline</span><span class="p">(</span>
             <span class="n">input_dim</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">sae_input_dim</span><span class="p">,</span>
             <span class="n">hidden_dim</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">sae_hidden_dim</span><span class="p">,</span>
             <span class="n">init_range</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">sae_init_range</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
@@ -1316,6 +1315,261 @@ Input: Ġis	Original top 5:[&#39; my&#39;, &#39;Hello&#39;, &#39; work&#39;, &#3
 Input: Ġincredible	Original top 5:[&#39; and&#39;, &#39; work&#39;, &#39;Hello&#39;, &#39; I&#39;, &#39;,&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39; blog&#39;, &#39; work&#39;, &#39;Hello&#39;, &#39; me&#39;]
 </pre></div>
 </div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">max_ratios</span><span class="p">,</span> <span class="n">mean_ratios</span><span class="p">,</span> <span class="n">square_ratios</span> <span class="o">=</span> <span class="n">test_features_roundtrip</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">sae</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "95123b1f7a3147ef9c189d4d2e9dc783", "version_major": 2, "version_minor": 0}</script><div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">82</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">max_ratios</span><span class="p">,</span> <span class="n">mean_ratios</span><span class="p">,</span> <span class="n">square_ratios</span> <span class="o">=</span> <span class="n">test_features_roundtrip</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">sae</span><span class="p">)</span>
+
+<span class="nn">Cell In[46], line 82,</span> in <span class="ni">test_features_roundtrip</span><span class="nt">(sae)</span>
+<span class="g g-Whitespace">     </span><span class="mi">80</span> <span class="n">mean_ratio</span> <span class="o">=</span> <span class="n">encoded_features</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">test_feature_index</span><span class="p">]</span><span class="o">/</span><span class="n">encoded_features</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">81</span> <span class="n">square_ratio</span> <span class="o">=</span> <span class="n">encoded_features</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">test_feature_index</span><span class="p">]</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">encoded_features</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="ne">---&gt; </span><span class="mi">82</span> <span class="n">max_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">max_ratio</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+<span class="g g-Whitespace">     </span><span class="mi">83</span> <span class="n">mean_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean_ratio</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+<span class="g g-Whitespace">     </span><span class="mi">84</span> <span class="n">square_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">square_ratio</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+<span class="ne">KeyboardInterrupt</span>: 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+
+<span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">max_ratios</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+</div>
+</div>
+<p>SAE improvements:</p>
+<p>Decoder weight normalization</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sae</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">sae</span>
+<span class="n">sae</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="n">sae</span><span class="o">.</span><span class="n">W_d</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># sae.W_d.norm(dim=0).shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor([1.7955, 1.8262, 1.8125,  ..., 1.8439, 1.7642, 1.4038], device=&#39;mps:0&#39;,
+       grad_fn=&lt;NormBackward1&gt;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">sae</span><span class="o">.</span><span class="n">W_d</span><span class="o">/</span><span class="n">sae</span><span class="o">.</span><span class="n">W_d</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor(1.0000, device=&#39;mps:0&#39;, grad_fn=&lt;SqrtBackward0&gt;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SAEDecoderNorm</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                 <span class="n">input_dim</span><span class="o">=</span><span class="n">sae_input_dim</span><span class="p">,</span>
+                 <span class="n">hidden_dim</span><span class="o">=</span><span class="n">sae_hidden_dim</span><span class="p">,</span>
+                 <span class="n">init_range</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span>
+                 <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">input_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">=</span> <span class="n">hidden_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_range</span> <span class="o">=</span> <span class="n">init_range</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias_d</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">input_dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias_e</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W_e</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W_d</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">))</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bias_d</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">init_range</span><span class="p">)</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bias_e</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">init_range</span><span class="p">)</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W_e</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">init_range</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">relu</span>
+
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="n">inputs_centered</span> <span class="o">=</span> <span class="nb">input</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_d</span>
+        <span class="n">act_input</span> <span class="o">=</span> <span class="n">einops</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="n">inputs_centered</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_e</span><span class="p">,</span>
+                                  <span class="s1">&#39;batch seq input_dim, hidden_dim input_dim -&gt; batch seq hidden_dim&#39;</span><span class="p">)</span>
+        <span class="n">act_input</span> <span class="o">=</span> <span class="n">act_input</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_e</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="n">act_input</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">einops</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_d</span><span class="p">,</span>
+                               <span class="s1">&#39;batch seq hidden_dim, input_dim hidden_dim -&gt; batch seq input_dim&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_d</span>
+        
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="nb">input</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">normalize_decoder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">t</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">W_d</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_d</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_d</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    
+<span class="k">class</span> <span class="nc">SAETrainer</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">sae</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">SAETrainingArgs</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sae</span> <span class="o">=</span> <span class="n">sae</span> <span class="ow">or</span> <span class="n">SAEDecoderNorm</span><span class="p">(</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">sae_input_dim</span><span class="p">,</span>
+            <span class="n">hidden_dim</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">sae_hidden_dim</span><span class="p">,</span>
+            <span class="n">init_range</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">sae_init_range</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sae</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">forward_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="n">sae_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sae</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+        <span class="n">sae_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sae</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">sae_features</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sae_features</span><span class="p">,</span> <span class="n">sae_output</span>
+
+
+    <span class="k">def</span> <span class="nf">get_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sae_input</span><span class="p">,</span> <span class="n">sae_features</span><span class="p">,</span> <span class="n">sae_output</span><span class="p">):</span>
+        <span class="n">rec_loss</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">sae_input</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="n">sae_output</span><span class="p">)</span>
+        <span class="n">l1_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">l1_coeff</span> <span class="o">*</span> <span class="n">sae_features</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">rec_loss</span> <span class="o">+</span> <span class="n">l1_loss</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">n_epochs</span> <span class="o">=</span> <span class="n">n_epochs</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">n_epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sae</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i_epoch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_epochs</span><span class="p">)):</span>
+            <span class="n">n_batches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span>
+            <span class="n">epoch_losses</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i_batch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_batches</span><span class="p">)):</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">i_batch</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span> <span class="p">(</span><span class="n">i_batch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">sae_features</span><span class="p">,</span> <span class="n">sae_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_loss</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">sae_features</span><span class="p">,</span> <span class="n">sae_output</span><span class="p">)</span>
+                <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sae</span><span class="o">.</span><span class="n">normalize_decoder</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                <span class="n">epoch_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">i_batch</span><span class="o">%</span><span class="k">100</span> == 0 or (i_batch &lt; 100 and i_batch % 10 == 0 and i_epoch==0)):
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">i_epoch</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">i_batch</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epoch_losses</span><span class="p">)</span>
+        
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">SAETrainingArgs</span><span class="p">()</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">SAETrainer</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">all_acts</span><span class="p">,</span> <span class="n">sae</span><span class="o">=</span><span class="n">SAEDecoderNorm</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+<span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "c94cfd52991c4b98a1847d329853d4c8", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "57402346b3314e05bbeec3e508dc1534", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0/0: 8.472856521606445
+0/10: 0.3259585201740265
+0/20: 0.15564392507076263
+0/30: 0.11285214871168137
+0/40: 0.09832911193370819
+0/50: 0.09164901077747345
+0/60: 0.08748806267976761
+0/70: 0.08486773073673248
+0/80: 0.0840553417801857
+0/90: 0.07953515648841858
+0/100: 0.07560604810714722
+0/200: 0.05524487793445587
+0/300: 0.04588102176785469
+0/400: 0.040326450020074844
+0/500: 0.037992388010025024
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "5cad7d126b0148578400c7feff43c3f4", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1/0: 0.036714326590299606
+1/100: 0.033527374267578125
+1/200: 0.03175676241517067
+1/300: 0.029606865718960762
+1/400: 0.027786705642938614
+1/500: 0.02778378687798977
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "817a9f51747441459d177e835770954b", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2/0: 0.026991648599505424
+2/100: 0.025464870035648346
+2/200: 0.024638455361127853
+2/300: 0.023153522983193398
+2/400: 0.021974408999085426
+2/500: 0.02195832133293152
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eval_sae_batch</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">sae</span><span class="p">,</span> <span class="n">gelu_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "fc3853f00b5148e3a5e46a1c533492dd", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Truncation was not explicitly activated but `max_length` is provided a specific value, please use `truncation=True` to explicitly truncate examples to max length. Defaulting to &#39;longest_first&#39; truncation strategy. If you encode pairs of sequences (GLUE-style) with the tokenizer you can select this strategy more precisely by providing a specific strategy to `truncation`.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MSE of MLP activation reconstruction: 0.034565459936857224
+Logit cross-entropy: -4.757816314697266
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eval_sae_single_input</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">sae</span><span class="p">,</span> <span class="n">gelu_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Input text: Hello from the other side this is incredible
+MSE of MLP activation reconstruction: 0.038368530571460724
+Logit cross-entropy: -7.672155857086182
+Input: Hello	Original top 5:[&#39;0&#39;, &#39; I&#39;, &#39; Thanks&#39;, &#39;1&#39;, &#39; Thank&#39;]	Reconstructed top 5:[&#39;Hello&#39;, &#39;Hi&#39;, &#39; Thank&#39;, &#39; I&#39;, &#39;0&#39;]
+Input: Ġfrom	Original top 5:[&#39; my&#39;, &#39; I&#39;, &#39;0&#39;, &#39; Welcome&#39;, &#39; 2&#39;]	Reconstructed top 5:[&#39; my&#39;, &#39; I&#39;, &#39;Hello&#39;, &#39;my&#39;, &#39;string&#39;]
+Input: Ġthe	Original top 5:[&#39; same&#39;, &#39; I&#39;, &#39; website&#39;, &#39; Welcome&#39;, &#39; name&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39;Hello&#39;, &#39; Hello&#39;, &#39;Hi&#39;, &#39; course&#39;]
+Input: Ġother	Original top 5:[&#39; website&#39;, &#39;Hello&#39;, &#39; course&#39;, &#39; part&#39;, &#39; blog&#39;]	Reconstructed top 5:[&#39;Hello&#39;, &#39; I&#39;, &#39;Hi&#39;, &#39;I&#39;, &#39; Hello&#39;]
+Input: Ġside	Original top 5:[&#39; of&#39;, &#39; I&#39;, &#39;Hello&#39;, &#39; and&#39;, &#39;0&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39;Hello&#39;, &#39; of&#39;, &#39;Hi&#39;, &#39;I&#39;]
+Input: Ġthis	Original top 5:[&#39;Hello&#39;, &#39; blog&#39;, &#39; is&#39;, &#39;Hi&#39;, &#39; I&#39;]	Reconstructed top 5:[&#39;Hello&#39;, &#39; I&#39;, &#39;Hi&#39;, &#39;?&#39;, &#39; is&#39;]
+Input: Ġis	Original top 5:[&#39; my&#39;, &#39;Hello&#39;, &#39; work&#39;, &#39; the&#39;, &#39; a&#39;]	Reconstructed top 5:[&#39;Hello&#39;, &#39; my&#39;, &#39; the&#39;, &#39; working&#39;, &#39; a&#39;]
+Input: Ġincredible	Original top 5:[&#39; and&#39;, &#39; work&#39;, &#39;Hello&#39;, &#39; I&#39;, &#39;,&#39;]	Reconstructed top 5:[&#39;Hello&#39;, &#39; I&#39;, &#39; work&#39;, &#39;,&#39;, &#39;?&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+<span class="n">max_ratios</span><span class="p">,</span> <span class="n">mean_ratios</span><span class="p">,</span> <span class="n">square_ratios</span> <span class="o">=</span> <span class="n">test_features_roundtrip</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">sae</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "1d4aad89eccd4ea986d77b63e385f5c1", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">max_ratios</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
 </div>
 </div>
 </section>
