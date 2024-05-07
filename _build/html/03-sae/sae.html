@@ -981,10 +981,7 @@ Moving model to device:  mps
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sae_flat</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;sae-0430.pt&#39;</span><span class="p">)</span>
-<span class="n">sae</span> <span class="o">=</span> <span class="n">SAE</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-<span class="n">sae</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">sae_flat</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span>
-<span class="n">all_acts</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;mlp_activations_64bs_512l_minipile1024_gelu1l.pkl&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_acts</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;mlp_activations_64bs_512l_minipile1024_gelu1l.pkl&#39;</span><span class="p">)</span>
 <span class="n">rand_indices</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">all_acts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="n">all_acts</span> <span class="o">=</span> <span class="n">all_acts</span><span class="p">[</span><span class="n">rand_indices</span><span class="p">]</span>
 <span class="n">all_acts</span><span class="o">.</span><span class="n">shape</span>
@@ -1105,22 +1102,14 @@ Moving model to device:  mps
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Logit cross-entropy: </span><span class="si">{</span><span class="n">crossentropy</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="n">compare_top_tokens</span><span class="p">(</span><span class="n">input_text</span><span class="p">,</span> <span class="n">logits_sae</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
     <span class="c1"># metrics = test_features_roundtrip(sae)</span>
-<span class="n">eval_sae_single_input</span><span class="p">(</span><span class="n">sae</span><span class="p">,</span> <span class="n">gelu_model</span><span class="p">)</span>
+    
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Input text: Hello from the other side this is incredible
-MSE of MLP activation reconstruction: 0.06152134761214256
-Logit cross-entropy: -5.282353401184082
-Input: Hello	Original top 5:[&#39;0&#39;, &#39; I&#39;, &#39; Thanks&#39;, &#39;1&#39;, &#39; Thank&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39; my&#39;, &#39; Thank&#39;, &#39;Hello&#39;, &#39;,&#39;]
-Input: Ġfrom	Original top 5:[&#39; my&#39;, &#39; I&#39;, &#39;0&#39;, &#39; Welcome&#39;, &#39; 2&#39;]	Reconstructed top 5:[&#39; my&#39;, &#39; I&#39;, &#39;Hello&#39;, &#39;0&#39;, &#39;D&#39;]
-Input: Ġthe	Original top 5:[&#39; same&#39;, &#39; I&#39;, &#39; website&#39;, &#39; Welcome&#39;, &#39; name&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39;Hello&#39;, &#39; my&#39;, &#39; course&#39;, &#39;Hi&#39;]
-Input: Ġother	Original top 5:[&#39; website&#39;, &#39;Hello&#39;, &#39; course&#39;, &#39; part&#39;, &#39; blog&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39;Hello&#39;, &#39;I&#39;, &#39;Hi&#39;, &#39; my&#39;]
-Input: Ġside	Original top 5:[&#39; of&#39;, &#39; I&#39;, &#39;Hello&#39;, &#39; and&#39;, &#39;0&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39; of&#39;, &#39;I&#39;, &#39;Hello&#39;, &#39;Hi&#39;]
-Input: Ġthis	Original top 5:[&#39;Hello&#39;, &#39; blog&#39;, &#39; is&#39;, &#39;Hi&#39;, &#39; I&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39; my&#39;, &#39;Hello&#39;, &#39; blog&#39;, &#39; course&#39;]
-Input: Ġis	Original top 5:[&#39; my&#39;, &#39;Hello&#39;, &#39; work&#39;, &#39; the&#39;, &#39; a&#39;]	Reconstructed top 5:[&#39; my&#39;, &#39; I&#39;, &#39; the&#39;, &#39;,&#39;, &#39; blog&#39;]
-Input: Ġincredible	Original top 5:[&#39; and&#39;, &#39; work&#39;, &#39;Hello&#39;, &#39; I&#39;, &#39;,&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39;,&#39;, &#39;Hello&#39;, &#39; blog&#39;, &#39; and&#39;]
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eval_sae_single_input</span><span class="p">(</span><span class="n">sae</span><span class="p">,</span> <span class="n">gelu_model</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1182,13 +1171,13 @@ Logit cross-entropy: 6.156724452972412
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">SAETrainingArgs</span><span class="p">:</span>
-    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1024</span>
-    <span class="n">l1_coeff</span> <span class="o">=</span> <span class="mf">0.006</span>
-    <span class="n">n_epochs</span> <span class="o">=</span> <span class="mi">3</span>
-    <span class="n">lr</span> <span class="o">=</span> <span class="mf">0.001</span>
-    <span class="n">sae_input_dim</span> <span class="o">=</span> <span class="mi">2048</span>
-    <span class="n">sae_hidden_dim</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="mi">2048</span>
-    <span class="n">sae_init_range</span> <span class="o">=</span> <span class="mf">0.04</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span>
+    <span class="n">l1_coeff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.006</span>
+    <span class="n">n_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span>
+    <span class="n">sae_input_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2048</span>
+    <span class="n">sae_hidden_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="mi">2048</span>
+    <span class="n">sae_init_range</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.04</span>
 
 <span class="k">class</span> <span class="nc">SAETrainer</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">sae</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">SAETrainingArgs</span><span class="p">()):</span>
@@ -1237,7 +1226,7 @@ Logit cross-entropy: 6.156724452972412
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">SAETrainingArgs</span><span class="p">()</span>
-<span class="n">trainer</span> <span class="o">=</span> <span class="n">SAETrainer</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">all_acts</span><span class="p">)</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">SAETrainer</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">all_acts</span><span class="p">)</span>
 <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1474,7 +1463,7 @@ Input: Ġincredible	Original top 5:[&#39; and&#39;, &#39; work&#39;, &#39;Hello&
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">SAETrainingArgs</span><span class="p">()</span>
-<span class="n">trainer</span> <span class="o">=</span> <span class="n">SAETrainer</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">all_acts</span><span class="p">,</span> <span class="n">sae</span><span class="o">=</span><span class="n">SAEDecoderNorm</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">SAETrainer</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">all_acts</span><span class="p">,</span> <span class="n">sae</span><span class="o">=</span><span class="n">SAEDecoderNorm</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
 <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1570,6 +1559,274 @@ Input: Ġincredible	Original top 5:[&#39; and&#39;, &#39; work&#39;, &#39;Hello&
 </div>
 </div>
 <div class="cell_output docutils container">
+</div>
+</div>
+<p>Train for twice as many epochs</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">SAETrainingArgs</span><span class="p">(</span><span class="n">n_epochs</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">SAETrainer</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">all_acts</span><span class="p">,</span> <span class="n">sae</span><span class="o">=</span><span class="n">SAEDecoderNorm</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+<span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "492495a58df740de91071ce367abed0f", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "5b4808d749f242dc8736ac421a48436b", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0/0: 0.19402514398097992
+0/10: 0.27924397587776184
+0/20: 0.19174246490001678
+0/30: 0.14824381470680237
+0/40: 0.09774590283632278
+0/50: 0.09019218385219574
+0/60: 0.08853206783533096
+0/70: 0.08636468648910522
+0/80: 0.08664554357528687
+0/90: 0.08434370160102844
+0/100: 0.08174484968185425
+0/200: 0.07043240964412689
+0/300: 0.057722099125385284
+0/400: 0.049783334136009216
+0/500: 0.04621308296918869
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "4d3b2500714345dcbcf7126b4c3e69c1", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1/0: 0.044634852558374405
+1/100: 0.04008451849222183
+1/200: 0.037304479628801346
+1/300: 0.03428930044174194
+1/400: 0.03126049041748047
+1/500: 0.030165284872055054
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "31621c61a5e74fd0b9888f3b4ed52920", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2/0: 0.029190683737397194
+2/100: 0.0266040600836277
+2/200: 0.0250152125954628
+2/300: 0.022638915106654167
+2/400: 0.0207227673381567
+2/500: 0.020102685317397118
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "d4f772508a6f4c67a67f538034f1a7f4", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3/0: 0.019391130656003952
+3/100: 0.01764043979346752
+3/200: 0.016658714041113853
+3/300: 0.015073486603796482
+3/400: 0.013957095332443714
+3/500: 0.013637447729706764
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "d248254d51054bc392dea55be709ae19", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4/0: 0.013241220265626907
+4/100: 0.012167582288384438
+4/200: 0.011646497994661331
+4/300: 0.010579909197986126
+4/400: 0.009761776775121689
+4/500: 0.009595388546586037
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "8b2c7363bf1f47c18756792562f84b9d", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>5/0: 0.009372466243803501
+5/100: 0.008551547303795815
+5/200: 0.00835131574422121
+5/300: 0.007677477318793535
+5/400: 0.007134762592613697
+5/500: 0.007999567314982414
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+<span class="n">eval_sae_batch</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">sae</span><span class="p">,</span> <span class="n">gelu_model</span><span class="p">)</span>
+<span class="n">eval_sae_single_input</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">sae</span><span class="p">,</span> <span class="n">gelu_model</span><span class="p">)</span>
+<span class="n">max_ratios</span><span class="p">,</span> <span class="n">mean_ratios</span><span class="p">,</span> <span class="n">square_ratios</span> <span class="o">=</span> <span class="n">test_features_roundtrip</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">sae</span><span class="p">)</span>
+<span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">max_ratios</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "daca8dbdc4e341b397482612ffc091c9", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MSE of MLP activation reconstruction: 0.012032467871904373
+Logit cross-entropy: -14.380462646484375
+Input text: Hello from the other side this is incredible
+MSE of MLP activation reconstruction: 0.01318950392305851
+Logit cross-entropy: -10.427953720092773
+Input: Hello	Original top 5:[&#39;0&#39;, &#39; I&#39;, &#39; Thanks&#39;, &#39;1&#39;, &#39; Thank&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39;0&#39;, &#39; Thanks&#39;, &#39;Hello&#39;, &#39;O&#39;]
+Input: Ġfrom	Original top 5:[&#39; my&#39;, &#39; I&#39;, &#39;0&#39;, &#39; Welcome&#39;, &#39; 2&#39;]	Reconstructed top 5:[&#39;0&#39;, &#39;string&#39;, &#39; I&#39;, &#39;my&#39;, &#39;1&#39;]
+Input: Ġthe	Original top 5:[&#39; same&#39;, &#39; I&#39;, &#39; website&#39;, &#39; Welcome&#39;, &#39; name&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39;Hello&#39;, &#39; Hello&#39;, &#39; same&#39;, &#39; work&#39;]
+Input: Ġother	Original top 5:[&#39; website&#39;, &#39;Hello&#39;, &#39; course&#39;, &#39; part&#39;, &#39; blog&#39;]	Reconstructed top 5:[&#39;Hello&#39;, &#39; work&#39;, &#39; I&#39;, &#39; blog&#39;, &#39; course&#39;]
+Input: Ġside	Original top 5:[&#39; of&#39;, &#39; I&#39;, &#39;Hello&#39;, &#39; and&#39;, &#39;0&#39;]	Reconstructed top 5:[&#39; of&#39;, &#39; I&#39;, &#39;Hello&#39;, &#39; work&#39;, &#39;Hi&#39;]
+Input: Ġthis	Original top 5:[&#39;Hello&#39;, &#39; blog&#39;, &#39; is&#39;, &#39;Hi&#39;, &#39; I&#39;]	Reconstructed top 5:[&#39;Hello&#39;, &#39; blog&#39;, &#39; I&#39;, &#39;Hi&#39;, &#39; work&#39;]
+Input: Ġis	Original top 5:[&#39; my&#39;, &#39;Hello&#39;, &#39; work&#39;, &#39; the&#39;, &#39; a&#39;]	Reconstructed top 5:[&#39; my&#39;, &#39; work&#39;, &#39;Hello&#39;, &#39; the&#39;, &#39; working&#39;]
+Input: Ġincredible	Original top 5:[&#39; and&#39;, &#39; work&#39;, &#39;Hello&#39;, &#39; I&#39;, &#39;,&#39;]	Reconstructed top 5:[&#39; work&#39;, &#39; right&#39;, &#39;Hello&#39;, &#39; I&#39;, &#39; and&#39;]
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "b5d99dd824594ba1a008194e32ddd655", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<p>Neuron resampling</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">tqdm.notebook</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="k">class</span> <span class="nc">SAEDecoderNorm</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                 <span class="n">input_dim</span><span class="o">=</span><span class="n">sae_input_dim</span><span class="p">,</span>
+                 <span class="n">hidden_dim</span><span class="o">=</span><span class="n">sae_hidden_dim</span><span class="p">,</span>
+                 <span class="n">init_range</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span>
+                 <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">input_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">=</span> <span class="n">hidden_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_range</span> <span class="o">=</span> <span class="n">init_range</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias_d</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">input_dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias_e</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W_e</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W_d</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">))</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bias_d</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">init_range</span><span class="p">)</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bias_e</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">init_range</span><span class="p">)</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W_e</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">init_range</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">relu</span>
+
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="n">inputs_centered</span> <span class="o">=</span> <span class="nb">input</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_d</span>
+        <span class="n">act_input</span> <span class="o">=</span> <span class="n">einops</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="n">inputs_centered</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_e</span><span class="p">,</span>
+                                  <span class="s1">&#39;batch seq input_dim, hidden_dim input_dim -&gt; batch seq hidden_dim&#39;</span><span class="p">)</span>
+        <span class="n">act_input</span> <span class="o">=</span> <span class="n">act_input</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_e</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="n">act_input</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">einops</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_d</span><span class="p">,</span>
+                               <span class="s1">&#39;batch seq hidden_dim, input_dim hidden_dim -&gt; batch seq input_dim&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_d</span>
+        
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="nb">input</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">normalize_decoder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">t</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">W_d</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_d</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_d</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">SAETrainingArgs</span><span class="p">:</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span>
+    <span class="n">l1_coeff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.006</span>
+    <span class="n">n_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span>
+    <span class="n">sae_input_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2048</span>
+    <span class="n">sae_hidden_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="mi">2048</span>
+    <span class="n">sae_init_range</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.04</span>
+    <span class="n">resampling_lookback_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">resample_epochs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">resample_batches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">])</span>
+    <span class="n">resample_epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.02</span>
+    
+
+<span class="k">class</span> <span class="nc">SAETrainerResampling</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">sae</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">SAETrainingArgs</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sae</span> <span class="o">=</span> <span class="n">sae</span> <span class="ow">or</span> <span class="n">SAEDecoderNorm</span><span class="p">(</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">sae_input_dim</span><span class="p">,</span>
+            <span class="n">hidden_dim</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">sae_hidden_dim</span><span class="p">,</span>
+            <span class="n">init_range</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">sae_init_range</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sae</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features_buffer_size</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">resampling_lookback_steps</span> <span class="o">*</span> <span class="n">args</span><span class="o">.</span><span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features_buffer</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">features_buffer_size</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">sae_hidden_dim</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="n">sae_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sae</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+        <span class="n">sae_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sae</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">sae_features</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sae_features</span><span class="p">,</span> <span class="n">sae_output</span>
+
+
+    <span class="k">def</span> <span class="nf">get_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sae_input</span><span class="p">,</span> <span class="n">sae_features</span><span class="p">,</span> <span class="n">sae_output</span><span class="p">):</span>
+        <span class="n">rec_loss</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">sae_input</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="n">sae_output</span><span class="p">)</span>
+        <span class="n">l1_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">l1_coeff</span> <span class="o">*</span> <span class="n">sae_features</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">rec_loss</span> <span class="o">+</span> <span class="n">l1_loss</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">update_features_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="n">einops</span><span class="o">.</span><span class="n">rearrange</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="s1">&#39;b s d_sae -&gt; (b s) d_sae&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features_buffer</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">features_buffer</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features_buffer</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">features_buffer_size</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_dead_neurons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">neurons_off</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features_buffer</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">resample_epsilon</span>
+        <span class="n">dead_neurons</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">neurons_off</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">dead_neurons</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">resample_dead_neurons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dead_neuron_inds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dead_neurons</span><span class="p">()</span>
+        
+    
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">n_epochs</span> <span class="o">=</span> <span class="n">n_epochs</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">n_epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sae</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i_epoch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_epochs</span><span class="p">)):</span>
+            <span class="n">n_batches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span>
+            <span class="n">epoch_losses</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i_batch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_batches</span><span class="p">)):</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">i_batch</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span> <span class="p">(</span><span class="n">i_batch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">sae_features</span><span class="p">,</span> <span class="n">sae_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_loss</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">sae_features</span><span class="p">,</span> <span class="n">sae_output</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_features_buffer</span><span class="p">(</span><span class="n">sae_features</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">i_epoch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">resample_epochs</span> <span class="ow">and</span> <span class="n">i_batch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">resample_batches</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">resample_dead_neurons</span><span class="p">()</span>
+                <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sae</span><span class="o">.</span><span class="n">normalize_decoder</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                <span class="n">epoch_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">i_batch</span><span class="o">%</span><span class="k">100</span> == 0 or (i_batch &lt; 100 and i_batch % 10 == 0 and i_epoch==0)):
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">i_epoch</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">i_batch</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epoch_losses</span><span class="p">)</span>
+        
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">SAETrainingArgs</span><span class="p">(</span><span class="n">n_epochs</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">sae</span> <span class="o">=</span> <span class="n">SAEDecoderNorm</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">SAETrainerResampling</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">all_acts</span><span class="p">,</span> <span class="n">sae</span><span class="o">=</span><span class="n">sae</span><span class="p">)</span>
+<span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "a7576cd0c219429d8e47d4819e8ad697", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "4892d50296d145c1b03357d867f5ce07", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0/0: 8.908500671386719
+torch.Size([16384])
+0/10: 0.3413562774658203
+torch.Size([16384])
+0/20: 0.1604389250278473
+torch.Size([16384])
+0/30: 0.11656936258077621
+torch.Size([16384])
+0/40: 0.10259252786636353
+torch.Size([16384])
+0/50: 0.09061692655086517
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">54</span><span class="p">],</span> <span class="n">line</span> <span class="mi">4</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">sae</span> <span class="o">=</span> <span class="n">SAEDecoderNorm</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">trainer</span> <span class="o">=</span> <span class="n">SAETrainerResampling</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">all_acts</span><span class="p">,</span> <span class="n">sae</span><span class="o">=</span><span class="n">sae</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+<span class="nn">Cell In[53], line 118,</span> in <span class="ni">SAETrainerResampling.train</span><span class="nt">(self, n_epochs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">116</span> <span class="bp">self</span><span class="o">.</span><span class="n">sae</span><span class="o">.</span><span class="n">normalize_decoder</span><span class="p">()</span>
+<span class="g g-Whitespace">    </span><span class="mi">117</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+<span class="ne">--&gt; </span><span class="mi">118</span> <span class="n">epoch_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+<span class="g g-Whitespace">    </span><span class="mi">119</span> <span class="k">if</span> <span class="p">(</span><span class="n">i_batch</span><span class="o">%</span><span class="k">100</span> == 0 or (i_batch &lt; 100 and i_batch % 10 == 0 and i_epoch==0)):
+<span class="g g-Whitespace">    </span><span class="mi">120</span>     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">i_epoch</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">i_batch</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="ne">KeyboardInterrupt</span>: 
+</pre></div>
+</div>
 </div>
 </div>
 </section>
