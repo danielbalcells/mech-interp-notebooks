@@ -352,6 +352,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#monday-4-29-24">Monday 4/29/24</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tuesday-4-30-24">Tuesday 4/30/24</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thursday-5-2-24">Thursday 5/2/24</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#monday-5-6-24">Monday 5/6/24</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#messy-from-here-on">Messy from here on</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hf-dataset">HF dataset</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gelu-model">GELU Model</a></li>
@@ -664,6 +665,10 @@ SAE output shape: torch.Size([3, 7, 2048])
     <span class="n">l1_loss</span> <span class="o">=</span> <span class="n">l1_coeff</span> <span class="o">*</span> <span class="n">features</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">rec_loss</span> <span class="o">+</span> <span class="n">l1_loss</span><span class="p">)</span>
 
+<span class="n">rand_indices</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">all_acts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">all_acts</span> <span class="o">=</span> <span class="n">all_acts</span><span class="p">[</span><span class="n">rand_indices</span><span class="p">]</span>
+<span class="n">all_acts</span><span class="o">.</span><span class="n">shape</span>
+
 <span class="n">n_epochs</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1024</span>
 <span class="n">l1_coeff</span> <span class="o">=</span> <span class="mf">0.006</span>
@@ -702,6 +707,16 @@ SAE output shape: torch.Size([3, 7, 2048])
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">115</span><span class="p">],</span> <span class="n">line</span> <span class="mi">2</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+<span class="ne">----&gt; </span><span class="mi">2</span> <span class="n">all_losses</span> <span class="o">=</span> <span class="n">losses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">losses</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">losses</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">all_losses</span><span class="p">,</span> <span class="n">log_x</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;losses&#39; is not defined
+</pre></div>
+</div>
 </div>
 </div>
 <p>One-hot SAE feature vectors don’t always get well reconstructed by decoding and encoding. We loop through features and measure a few ratios:</p>
@@ -739,7 +754,17 @@ SAE output shape: torch.Size([3, 7, 2048])
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 16384/16384 [03:37&lt;00:00, 75.21it/s] 
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 16384/16384 [01:30&lt;00:00, 180.98it/s]
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">114</span><span class="p">],</span> <span class="n">line</span> <span class="mi">23</span>
+<span class="g g-Whitespace">     </span><span class="mi">20</span>     <span class="k">return</span> <span class="n">max_ratios</span><span class="p">,</span> <span class="n">mean_ratios</span><span class="p">,</span> <span class="n">square_ratios</span>
+<span class="g g-Whitespace">     </span><span class="mi">22</span> <span class="n">max_ratios</span><span class="p">,</span> <span class="n">mean_ratios</span><span class="p">,</span> <span class="n">square_ratios</span> <span class="o">=</span> <span class="n">test_features_roundtrip</span><span class="p">(</span><span class="n">sae</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">23</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">max_ratios</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+<span class="ne">NameError</span>: name &#39;px&#39; is not defined
 </pre></div>
 </div>
 </div>
@@ -877,6 +902,227 @@ Input: Ġincredible	Original top 5:[&#39; and&#39;, &#39; work&#39;, &#39;Hello&
 </div>
 <div class="cell_output docutils container">
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor(-453661.6250, device=&#39;mps:0&#39;, grad_fn=&lt;DivBackward1&gt;)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="monday-5-6-24">
+<h2>Monday 5/6/24<a class="headerlink" href="#monday-5-6-24" title="Link to this heading">#</a></h2>
+<p>SAE with batch dimension.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">t</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">import</span> <span class="nn">datasets</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">einops</span>
+
+<span class="kn">from</span> <span class="nn">transformer_lens</span> <span class="kn">import</span> <span class="n">utils</span><span class="p">,</span> <span class="n">ActivationCache</span><span class="p">,</span> <span class="n">HookedTransformer</span><span class="p">,</span> <span class="n">HookedTransformerConfig</span>
+<span class="kn">from</span> <span class="nn">transformer_lens.hook_points</span> <span class="kn">import</span> <span class="n">HookPoint</span>
+
+<span class="n">device</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;mps&#39;</span><span class="p">)</span>
+<span class="n">gelu_model</span> <span class="o">=</span> <span class="n">HookedTransformer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s1">&#39;gelu-1l&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+<span class="n">sae_input_dim</span> <span class="o">=</span> <span class="n">gelu_model</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">d_mlp</span>
+<span class="n">sae_hidden_dim</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">sae_input_dim</span>
+<span class="n">sae_output_dim</span> <span class="o">=</span> <span class="n">sae_input_dim</span>
+
+<span class="k">class</span> <span class="nc">SAE</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                 <span class="n">input_dim</span><span class="o">=</span><span class="n">sae_input_dim</span><span class="p">,</span>
+                 <span class="n">hidden_dim</span><span class="o">=</span><span class="n">sae_hidden_dim</span><span class="p">,</span>
+                 <span class="n">init_range</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span>
+                 <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">input_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">=</span> <span class="n">hidden_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_range</span> <span class="o">=</span> <span class="n">init_range</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias_d</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">input_dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias_e</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W_e</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W_d</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">))</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bias_d</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">init_range</span><span class="p">)</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bias_e</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">init_range</span><span class="p">)</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W_e</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">init_range</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">relu</span>
+
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="n">inputs_centered</span> <span class="o">=</span> <span class="nb">input</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_d</span>
+        <span class="n">act_input</span> <span class="o">=</span> <span class="n">einops</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="n">inputs_centered</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_e</span><span class="p">,</span>
+                                  <span class="s1">&#39;batch seq input_dim, hidden_dim input_dim -&gt; batch seq hidden_dim&#39;</span><span class="p">)</span>
+        <span class="n">act_input</span> <span class="o">=</span> <span class="n">act_input</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_e</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="n">act_input</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">einops</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_d</span><span class="p">,</span>
+                               <span class="s1">&#39;batch seq hidden_dim, input_dim hidden_dim -&gt; batch seq input_dim&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_d</span>
+        
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="nb">input</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loaded pretrained model gelu-1l into HookedTransformer
+Moving model to device:  mps
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sae_flat</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;sae-0430.pt&#39;</span><span class="p">)</span>
+<span class="n">sae</span> <span class="o">=</span> <span class="n">SAE</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="n">sae</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">sae_flat</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span>
+<span class="n">all_acts</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;mlp_activations_64bs_512l_minipile1024_gelu1l.pkl&#39;</span><span class="p">)</span>
+<span class="n">rand_indices</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">all_acts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">all_acts</span> <span class="o">=</span> <span class="n">all_acts</span><span class="p">[</span><span class="n">rand_indices</span><span class="p">]</span>
+<span class="n">all_acts</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>torch.Size([524288, 2048])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Eval functions including updated ones</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+
+<span class="n">device</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;mps&#39;</span><span class="p">)</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">SAEActivationTracker</span><span class="p">:</span>
+    <span class="n">mlp_acts</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">feats</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">mlp_acts_reconstructed</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">reconstruction_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">hook</span><span class="p">,</span> <span class="n">sae</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mlp_acts</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="n">sae</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="n">acts_reconstructed</span> <span class="o">=</span> <span class="n">sae</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mlp_acts_reconstructed</span> <span class="o">=</span> <span class="n">acts_reconstructed</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">acts_reconstructed</span>
+    
+    <span class="k">def</span> <span class="nf">get_act_mse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mlp_acts_reconstructed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp_acts</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">run_with_sae</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sae</span><span class="p">,</span> <span class="n">input_tokens</span><span class="p">,</span> <span class="n">sae_act_tracker</span><span class="p">):</span>
+    <span class="n">hook_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">sae_act_tracker</span><span class="o">.</span><span class="n">reconstruction_hook</span><span class="p">,</span> <span class="n">sae</span><span class="o">=</span><span class="n">sae</span><span class="p">)</span>
+    <span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">run_with_hooks</span><span class="p">(</span>
+        <span class="n">input_tokens</span><span class="p">,</span>
+        <span class="n">fwd_hooks</span><span class="o">=</span><span class="p">[(</span>
+           <span class="s1">&#39;blocks.0.mlp.hook_post&#39;</span><span class="p">,</span>
+           <span class="n">hook_fn</span>
+        <span class="p">)]</span> 
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">logits</span>
+    
+<span class="k">def</span> <span class="nf">run_test_input</span><span class="p">(</span><span class="n">sae</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">input_text</span><span class="p">):</span>
+    <span class="n">input_tokens</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">input_text</span><span class="p">))</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">input_str_tokenized</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">input_text</span><span class="p">)</span>
+    <span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">input_tokens</span><span class="p">)</span>
+    <span class="n">sae_act_tracker</span> <span class="o">=</span> <span class="n">SAEActivationTracker</span><span class="p">()</span>
+    <span class="n">logits_sae</span> <span class="o">=</span> <span class="n">run_with_sae</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sae</span><span class="p">,</span> <span class="n">input_tokens</span><span class="p">,</span> <span class="n">sae_act_tracker</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">logits</span><span class="p">,</span> <span class="n">logits_sae</span><span class="p">,</span> <span class="n">sae_act_tracker</span>
+
+<span class="k">def</span> <span class="nf">get_top_tokens</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">logits</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">sorted_logits</span><span class="p">,</span> <span class="n">sorted_inds</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">top_k</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">top_tokens</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">seq_pos</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">pos_top_tokens</span> <span class="o">=</span> <span class="n">sorted_inds</span><span class="p">[</span><span class="n">seq_pos</span><span class="p">]</span>
+        <span class="n">pos_top_tokens_decoded</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">top_k_ind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">top_k</span><span class="p">):</span>
+            <span class="n">pos_top_tokens_decoded</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">pos_top_tokens</span><span class="p">[</span><span class="n">top_k_ind</span><span class="p">]))</span>
+        <span class="n">top_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos_top_tokens_decoded</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">top_tokens</span>
+
+<span class="k">def</span> <span class="nf">compare_top_tokens</span><span class="p">(</span><span class="n">input_text</span><span class="p">,</span> <span class="n">logits_sae</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="n">input_tokens</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">input_text</span><span class="p">)</span>
+    <span class="n">top_tokens_orig</span> <span class="o">=</span> <span class="n">get_top_tokens</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+    <span class="n">top_tokens_recons</span> <span class="o">=</span> <span class="n">get_top_tokens</span><span class="p">(</span><span class="n">logits_sae</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">input_str_token</span><span class="p">,</span> <span class="n">top_k_orig</span><span class="p">,</span> <span class="n">top_k_recons</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">input_tokens</span><span class="p">,</span> 
+                                                        <span class="n">top_tokens_orig</span><span class="p">,</span> 
+                                                        <span class="n">top_tokens_recons</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Input: </span><span class="si">{</span><span class="n">input_str_token</span><span class="si">}</span><span class="se">\t</span><span class="s1">Original top 5:</span><span class="si">{</span><span class="n">top_k_orig</span><span class="si">}</span><span class="se">\t</span><span class="s1">Reconstructed top 5:</span><span class="si">{</span><span class="n">top_k_recons</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">get_crossentropy</span><span class="p">(</span><span class="n">logits_sae</span><span class="p">,</span> <span class="n">logits</span><span class="p">):</span>
+    <span class="n">crossentropy</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">logits_sae</span><span class="p">,</span> 
+                                                <span class="n">target</span><span class="o">=</span><span class="n">logits</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">crossentropy</span>
+
+<span class="k">def</span> <span class="nf">test_features_roundtrip</span><span class="p">(</span><span class="n">sae</span><span class="p">):</span>
+    <span class="n">max_ratios</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">mean_ratios</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">square_ratios</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">test_feature_index</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">sae_hidden_dim</span><span class="p">)):</span>
+        <span class="n">test_feature</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">sae_hidden_dim</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">test_feature</span><span class="p">[</span><span class="n">test_feature_index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">test_feature</span><span class="o">.</span><span class="n">unsqueeze_</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">test_mlp_activation</span> <span class="o">=</span> <span class="n">sae</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">test_feature</span><span class="p">)</span>
+        <span class="n">encoded_features</span> <span class="o">=</span> <span class="n">sae</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">test_mlp_activation</span><span class="p">)</span>
+        <span class="n">max_ratio</span> <span class="o">=</span> <span class="n">encoded_features</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">test_feature_index</span><span class="p">]</span><span class="o">/</span><span class="n">encoded_features</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">mean_ratio</span> <span class="o">=</span> <span class="n">encoded_features</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">test_feature_index</span><span class="p">]</span><span class="o">/</span><span class="n">encoded_features</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">square_ratio</span> <span class="o">=</span> <span class="n">encoded_features</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">test_feature_index</span><span class="p">]</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">encoded_features</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">max_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">max_ratio</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+        <span class="n">mean_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean_ratio</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+        <span class="n">square_ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">square_ratio</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+    <span class="c1"># px.line(encoded_features[0].cpu().detach().numpy())</span>
+    <span class="k">return</span> <span class="n">max_ratios</span><span class="p">,</span> <span class="n">mean_ratios</span><span class="p">,</span> <span class="n">square_ratios</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DEF_INPUT_TEXT</span> <span class="o">=</span> <span class="s1">&#39;Hello from the other side this is incredible&#39;</span>
+<span class="k">def</span> <span class="nf">eval_sae_single_input</span><span class="p">(</span><span class="n">sae</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">input_text</span><span class="o">=</span><span class="n">DEF_INPUT_TEXT</span><span class="p">):</span>
+    <span class="n">sae</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="n">input_text</span> <span class="o">=</span> <span class="n">DEF_INPUT_TEXT</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Input text: </span><span class="si">{</span><span class="n">input_text</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">logits</span><span class="p">,</span> <span class="n">logits_sae</span><span class="p">,</span> <span class="n">sae_act_tracker</span> <span class="o">=</span> <span class="n">run_test_input</span><span class="p">(</span><span class="n">sae</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">input_text</span><span class="p">)</span>
+    <span class="n">activation_mse</span> <span class="o">=</span> <span class="n">sae_act_tracker</span><span class="o">.</span><span class="n">get_act_mse</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MSE of MLP activation reconstruction: </span><span class="si">{</span><span class="n">activation_mse</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">crossentropy</span> <span class="o">=</span> <span class="n">get_crossentropy</span><span class="p">(</span><span class="n">logits_sae</span><span class="p">,</span> <span class="n">logits</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Logit cross-entropy: </span><span class="si">{</span><span class="n">crossentropy</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">compare_top_tokens</span><span class="p">(</span><span class="n">input_text</span><span class="p">,</span> <span class="n">logits_sae</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+    <span class="c1"># metrics = test_features_roundtrip(sae)</span>
+<span class="n">eval_sae_single_input</span><span class="p">(</span><span class="n">sae</span><span class="p">,</span> <span class="n">gelu_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Input text: Hello from the other side this is incredible
+MSE of MLP activation reconstruction: 0.06152134761214256
+Logit cross-entropy: -5.282353401184082
+Input: Hello	Original top 5:[&#39;0&#39;, &#39; I&#39;, &#39; Thanks&#39;, &#39;1&#39;, &#39; Thank&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39; my&#39;, &#39; Thank&#39;, &#39;Hello&#39;, &#39;,&#39;]
+Input: Ġfrom	Original top 5:[&#39; my&#39;, &#39; I&#39;, &#39;0&#39;, &#39; Welcome&#39;, &#39; 2&#39;]	Reconstructed top 5:[&#39; my&#39;, &#39; I&#39;, &#39;Hello&#39;, &#39;0&#39;, &#39;D&#39;]
+Input: Ġthe	Original top 5:[&#39; same&#39;, &#39; I&#39;, &#39; website&#39;, &#39; Welcome&#39;, &#39; name&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39;Hello&#39;, &#39; my&#39;, &#39; course&#39;, &#39;Hi&#39;]
+Input: Ġother	Original top 5:[&#39; website&#39;, &#39;Hello&#39;, &#39; course&#39;, &#39; part&#39;, &#39; blog&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39;Hello&#39;, &#39;I&#39;, &#39;Hi&#39;, &#39; my&#39;]
+Input: Ġside	Original top 5:[&#39; of&#39;, &#39; I&#39;, &#39;Hello&#39;, &#39; and&#39;, &#39;0&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39; of&#39;, &#39;I&#39;, &#39;Hello&#39;, &#39;Hi&#39;]
+Input: Ġthis	Original top 5:[&#39;Hello&#39;, &#39; blog&#39;, &#39; is&#39;, &#39;Hi&#39;, &#39; I&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39; my&#39;, &#39;Hello&#39;, &#39; blog&#39;, &#39; course&#39;]
+Input: Ġis	Original top 5:[&#39; my&#39;, &#39;Hello&#39;, &#39; work&#39;, &#39; the&#39;, &#39; a&#39;]	Reconstructed top 5:[&#39; my&#39;, &#39; I&#39;, &#39; the&#39;, &#39;,&#39;, &#39; blog&#39;]
+Input: Ġincredible	Original top 5:[&#39; and&#39;, &#39; work&#39;, &#39;Hello&#39;, &#39; I&#39;, &#39;,&#39;]	Reconstructed top 5:[&#39; I&#39;, &#39;,&#39;, &#39;Hello&#39;, &#39; blog&#39;, &#39; and&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">eval_sae_full_batch</span><span class="p">(</span><span class="n">sae</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
 </pre></div>
 </div>
 </div>
@@ -3269,6 +3515,7 @@ Input: Ġincredible	Original top 5:[&#39; and&#39;, &#39; work&#39;, &#39;Hello&
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#monday-4-29-24">Monday 4/29/24</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tuesday-4-30-24">Tuesday 4/30/24</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thursday-5-2-24">Thursday 5/2/24</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#monday-5-6-24">Monday 5/6/24</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#messy-from-here-on">Messy from here on</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hf-dataset">HF dataset</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gelu-model">GELU Model</a></li>
