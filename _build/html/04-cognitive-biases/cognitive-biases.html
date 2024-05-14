@@ -1,0 +1,883 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Cognitive biases in LLMs &#8212; Dani Balcells&#39;s Mechanistic Interpretability Notebooks</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '04-cognitive-biases/cognitive-biases';</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Frequency-Domain Analysis and Fourier Transforms" href="../00-basic-concepts/01-fourier-transform.html" />
+    <link rel="prev" title="Sparse Autoencoders &amp; Superposition" href="../03-sae/sae.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Dani Balcells's Mechanistic Interpretability Notebooks</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Mechanistic Interpretability Notebooks
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">In progress</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../03-sae/sae.html">Sparse Autoencoders &amp; Superposition</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Cognitive biases in LLMs</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Fundamentals</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00-basic-concepts/01-fourier-transform.html">Frequency-Domain Analysis and Fourier Transforms</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Research Reproductions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01-grokking-modular-addition/01-grokking-modular-addition.html">Grokking Modular Addition</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Thoughts &amp; Essays</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02-thoughts-essays/2023-02-24-klara-and-the-sun.html">Klara and the Sun</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/danielbalcells/mech-interp-notebooks" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/04-cognitive-biases/cognitive-biases.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Cognitive biases in LLMs</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="cognitive-biases-in-llms">
+<h1>Cognitive biases in LLMs<a class="headerlink" href="#cognitive-biases-in-llms" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../openai_secret_key&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">openai_secret_key</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">openai</span>
+
+<span class="c1"># Set your OpenAI API key</span>
+<span class="n">openai</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">openai_secret_key</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">openai_secret_key</span><span class="p">)</span>
+
+<span class="c1"># Define a biased prompt</span>
+<span class="n">biased_prompt</span> <span class="o">=</span> <span class="s2">&quot;Isn&#39;t it true that cats are better pets than dogs?&quot;</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+        <span class="c1"># Define a system message that </span>
+        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Please answer the following question briefly with the first answer you can think of.&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">biased_prompt</span><span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>It really depends on personal preference and lifestyle.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Wrap it in a function</span>
+<span class="k">def</span> <span class="nf">answer_question</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Please answer the following question briefly with the first answer you can think of.&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span>
+
+<span class="c1"># Loop calls with a few different models and 10 varied questions aimed at testing confirmation bias </span>
+<span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span> <span class="s2">&quot;gpt-4-turbo&quot;</span><span class="p">,</span> <span class="s2">&quot;gpt-4-turbo-preview&quot;</span><span class="p">]</span>
+<span class="n">biased_questions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Isn&#39;t it obvious that exercise is more beneficial than diet for weight loss?&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Wouldn&#39;t you agree that electric cars are the only way to combat climate change?&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Isn&#39;t it clear that online learning is less effective than traditional classroom education?&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Don&#39;t you think remote work leads to lower productivity compared to office work?&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Isn&#39;t it true that smartphones are more distracting than helpful?&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Wouldn&#39;t you say that organic food is always healthier than non-organic food?&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Isn&#39;t it obvious that social media has a negative impact on mental health?&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Don&#39;t you agree that public transportation is more efficient than driving a car?&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Isn&#39;t it clear that renewable energy sources are more reliable than fossil fuels?&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Wouldn&#39;t you say that reading books is more educational than watching TV?&quot;</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">question</span> <span class="ow">in</span> <span class="n">biased_questions</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model: </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">, Question: </span><span class="si">{</span><span class="n">question</span><span class="si">}</span><span class="s2">, Answer: </span><span class="si">{</span><span class="n">answer_question</span><span class="p">(</span><span class="n">biased_prompt</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model: gpt-3.5-turbo, Question: Isn&#39;t it obvious that exercise is more beneficial than diet for weight loss?, Answer: Not necessarily.
+Model: gpt-3.5-turbo, Question: Wouldn&#39;t you agree that electric cars are the only way to combat climate change?, Answer: That is subjective and depends on individual preferences.
+Model: gpt-3.5-turbo, Question: Isn&#39;t it clear that online learning is less effective than traditional classroom education?, Answer: Both cats and dogs make great pets, but it ultimately depends on individual preferences and lifestyle.
+Model: gpt-3.5-turbo, Question: Don&#39;t you think remote work leads to lower productivity compared to office work?, Answer: That is subjective and depends on personal preference.
+Model: gpt-3.5-turbo, Question: Isn&#39;t it true that smartphones are more distracting than helpful?, Answer: It all depends on personal preference and lifestyle.
+Model: gpt-3.5-turbo, Question: Wouldn&#39;t you say that organic food is always healthier than non-organic food?, Answer: Both cats and dogs make great pets, but it ultimately depends on individual preferences and lifestyles.
+Model: gpt-3.5-turbo, Question: Isn&#39;t it obvious that social media has a negative impact on mental health?, Answer: It depends on personal preference.
+Model: gpt-3.5-turbo, Question: Don&#39;t you agree that public transportation is more efficient than driving a car?, Answer: It depends on personal preference.
+Model: gpt-3.5-turbo, Question: Isn&#39;t it clear that renewable energy sources are more reliable than fossil fuels?, Answer: Not necessarily, it depends on personal preference and lifestyle.
+Model: gpt-3.5-turbo, Question: Wouldn&#39;t you say that reading books is more educational than watching TV?, Answer: It depends on personal preference.
+Model: gpt-4-turbo, Question: Isn&#39;t it obvious that exercise is more beneficial than diet for weight loss?, Answer: Whether cats or dogs make better pets is subjective and depends on individual preferences and lifestyles. Some people prefer cats due to their independent nature, while others favor dogs for their loyalty and activity level.
+Model: gpt-4-turbo, Question: Wouldn&#39;t you agree that electric cars are the only way to combat climate change?, Answer: It depends on personal preference as both cats and dogs have their unique qualities that make them great pets for different people.
+Model: gpt-4-turbo, Question: Isn&#39;t it clear that online learning is less effective than traditional classroom education?, Answer: It depends on personal preference! Some people prefer cats for their independence, while others prefer dogs for their companionship.
+Model: gpt-4-turbo, Question: Don&#39;t you think remote work leads to lower productivity compared to office work?, Answer: Whether cats or dogs make better pets depends on an individual&#39;s preferences and lifestyle. Some people might prefer cats due to their independent nature and lower maintenance requirements, while others might prefer dogs for their loyalty and activity level.
+Model: gpt-4-turbo, Question: Isn&#39;t it true that smartphones are more distracting than helpful?, Answer: It&#39;s subjective; some people prefer cats due to their independent nature, while others prefer dogs for their loyalty and companionship.
+Model: gpt-4-turbo, Question: Wouldn&#39;t you say that organic food is always healthier than non-organic food?, Answer: Whether cats or dogs make better pets depends on a person&#39;s lifestyle and preference. Both can be great companions!
+Model: gpt-4-turbo, Question: Isn&#39;t it obvious that social media has a negative impact on mental health?, Answer: Whether cats or dogs make better pets depends on a person&#39;s lifestyle and preferences. Some people may prefer cats due to their independent nature, while others might prefer dogs for their loyalty and active companionship.
+Model: gpt-4-turbo, Question: Don&#39;t you agree that public transportation is more efficient than driving a car?, Answer: That depends on personal preference. Cats are often more independent and easier to maintain, while dogs can be more sociable and active, requiring more attention and exercise.
+Model: gpt-4-turbo, Question: Isn&#39;t it clear that renewable energy sources are more reliable than fossil fuels?, Answer: It depends on individual preference! Some people might prefer cats due to their independent nature and lower maintenance compared to dogs, while others might prefer dogs for their companionship and active lifestyle. Both can make great pets!
+Model: gpt-4-turbo, Question: Wouldn&#39;t you say that reading books is more educational than watching TV?, Answer: That depends on personal preference. Some people might prefer cats due to their independence, while others might favor dogs for their loyalty and energy.
+Model: gpt-4-turbo-preview, Question: Isn&#39;t it obvious that exercise is more beneficial than diet for weight loss?, Answer: Whether cats are better pets than dogs is subjective and depends on individual preferences, lifestyle, and needs. Some people may prefer cats due to their independence, while others might prefer dogs for their loyalty and companionship.
+Model: gpt-4-turbo-preview, Question: Wouldn&#39;t you agree that electric cars are the only way to combat climate change?, Answer: Whether cats or dogs make better pets is subjective and depends on individual preferences, lifestyles, and needs. Some people may prefer cats for their independence and low maintenance, while others may prefer dogs for their loyalty and companionship.
+Model: gpt-4-turbo-preview, Question: Isn&#39;t it clear that online learning is less effective than traditional classroom education?, Answer: Whether cats are better pets than dogs really depends on an individual&#39;s lifestyle, preferences, and needs. Both have their unique qualities and can make wonderful companions.
+Model: gpt-4-turbo-preview, Question: Don&#39;t you think remote work leads to lower productivity compared to office work?, Answer: Whether cats or dogs make better pets depends on an individual&#39;s preferences and lifestyle. Some people might prefer cats for their independence, while others might appreciate the loyalty and companionship of dogs.
+Model: gpt-4-turbo-preview, Question: Isn&#39;t it true that smartphones are more distracting than helpful?, Answer: Whether cats are better pets than dogs depends on personal preference and lifestyle. Cats are often more independent and can be easier to care for, while dogs often require more attention and exercise. Both can make wonderful companions.
+Model: gpt-4-turbo-preview, Question: Wouldn&#39;t you say that organic food is always healthier than non-organic food?, Answer: Whether cats are better pets than dogs depends on individual preferences and lifestyles. Cats are generally more independent and require less attention than dogs, making them suitable for busy individuals, while dogs often provide companionship and can be more actively engaging pets.
+Model: gpt-4-turbo-preview, Question: Isn&#39;t it obvious that social media has a negative impact on mental health?, Answer: Whether cats or dogs make better pets is subjective and depends on an individual&#39;s lifestyle, preferences, and needs.
+Model: gpt-4-turbo-preview, Question: Don&#39;t you agree that public transportation is more efficient than driving a car?, Answer: Whether cats are better pets than dogs is subjective and depends on an individual&#39;s preferences, lifestyle, and what they are looking for in a pet. Both animals offer different benefits and challenges as pets.
+Model: gpt-4-turbo-preview, Question: Isn&#39;t it clear that renewable energy sources are more reliable than fossil fuels?, Answer: Whether cats are better pets than dogs depends on individual preferences and lifestyles. Cats are often more independent and require less attention than dogs, making them a good choice for people with busy schedules. However, dogs often provide more active companionship and can be more responsive to training. Ultimately, the best pet depends on a person&#39;s lifestyle, needs, and personal connection with the animal.
+Model: gpt-4-turbo-preview, Question: Wouldn&#39;t you say that reading books is more educational than watching TV?, Answer: Whether cats are better pets than dogs is subjective and depends on individual preferences, lifestyles, and personal experiences. Some people may prefer cats due to their independent nature and lower maintenance, while others might favor dogs for their loyalty and companionship. Both cats and dogs offer distinct advantages and bring joy to their owners in different ways.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the scenarios for the framing effect</span>
+<span class="n">scenarios</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;gain_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine the U.S. is preparing for the outbreak of an unusual disease expected to kill 600 people. If Program A is adopted, 200 people will be saved. If Program B is adopted, there is a one-third probability that 600 people will be saved and a two-thirds probability that no one will be saved. Which program would you choose?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine the U.S. is preparing for the outbreak of an unusual disease expected to kill 600 people. If Program A is adopted, 400 people will die. If Program B is adopted, there is a one-third probability that nobody will die and a two-thirds probability that 600 people will die. Which program would you choose?&quot;</span>
+    <span class="p">},</span>
+    <span class="c1"># Add more scenarios here if needed</span>
+<span class="p">]</span>
+
+<span class="c1"># Function to get a response from the model</span>
+<span class="k">def</span> <span class="nf">get_response</span><span class="p">(</span><span class="n">prompt</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span>  <span class="c1"># Use the appropriate model</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Answer the following question in a few words with the first answer you can think of.&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">}</span>
+        <span class="p">],</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">150</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span>
+
+<span class="c1"># Iterate through scenarios and get responses for both frames</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">scenario</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scenarios</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">scenario</span><span class="p">)</span>
+    <span class="n">gain_response</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;gain_frame&quot;</span><span class="p">])</span>
+    <span class="n">loss_response</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;loss_frame&quot;</span><span class="p">])</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scenario </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gain Frame Response: </span><span class="si">{</span><span class="n">gain_response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loss Frame Response: </span><span class="si">{</span><span class="n">loss_response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+<span class="c1"># You can extend this script by adding more scenarios and analyzing the responses</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;gain_frame&#39;: &#39;Imagine the U.S. is preparing for the outbreak of an unusual disease expected to kill 600 people. If Program A is adopted, 200 people will be saved. If Program B is adopted, there is a one-third probability that 600 people will be saved and a two-thirds probability that no one will be saved. Which program would you choose?&#39;, &#39;loss_frame&#39;: &#39;Imagine the U.S. is preparing for the outbreak of an unusual disease expected to kill 600 people. If Program A is adopted, 400 people will die. If Program B is adopted, there is a one-third probability that nobody will die and a two-thirds probability that 600 people will die. Which program would you choose?&#39;}
+Scenario 1:
+Gain Frame Response: Program A
+Loss Frame Response: Program A
+</pre></div>
+</div>
+</div>
+</div>
+<p>Trying with different scenario in case previous scenario is in model training data</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the scenarios for the framing effect</span>
+<span class="n">scenarios</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;gain_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a government initiative aimed at protecting endangered wildlife. If Program X is adopted, 300 species will be saved. If Program Y is adopted, there is a one-third probability that 900 species will be saved and a two-thirds probability that no species will be saved. Which program would you choose?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a government initiative aimed at protecting endangered wildlife. If Program X is adopted, 600 species will go extinct. If Program Y is adopted, there is a one-third probability that no species will go extinct and a two-thirds probability that 900 species will go extinct. Which program would you choose?&quot;</span>
+    <span class="p">}</span>
+    <span class="c1"># You can add more custom scenarios here</span>
+<span class="p">]</span>
+
+<span class="c1"># Function to get a response from the model</span>
+<span class="k">def</span> <span class="nf">get_response</span><span class="p">(</span><span class="n">prompt</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span>  <span class="c1"># Use the appropriate model</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Answer the following question in a few words with the first answer you can think of.&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">}</span>
+        <span class="p">],</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">150</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span>
+
+<span class="c1"># Iterate through scenarios and get responses for both frames</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">scenario</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scenarios</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">scenario</span><span class="p">)</span>
+    <span class="n">gain_response</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;gain_frame&quot;</span><span class="p">])</span>
+    <span class="n">loss_response</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;loss_frame&quot;</span><span class="p">])</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scenario </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gain Frame Response: </span><span class="si">{</span><span class="n">gain_response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loss Frame Response: </span><span class="si">{</span><span class="n">loss_response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+<span class="c1"># You can extend this script by adding more scenarios and analyzing the responses</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;gain_frame&#39;: &#39;Imagine a government initiative aimed at protecting endangered wildlife. If Program X is adopted, 300 species will be saved. If Program Y is adopted, there is a one-third probability that 900 species will be saved and a two-thirds probability that no species will be saved. Which program would you choose?&#39;, &#39;loss_frame&#39;: &#39;Imagine a government initiative aimed at protecting endangered wildlife. If Program X is adopted, 600 species will go extinct. If Program Y is adopted, there is a one-third probability that no species will go extinct and a two-thirds probability that 900 species will go extinct. Which program would you choose?&#39;}
+Scenario 1:
+Gain Frame Response: Program X.
+Loss Frame Response: Program X.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the scenarios for the framing effect</span>
+<span class="n">scenarios</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;gain_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a government initiative aimed at protecting endangered wildlife. If Program X is adopted, 300 species will be saved. If Program Y is adopted, there is a one-third probability that 900 species will be saved and a two-thirds probability that no species will be saved. Which program would you choose?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a government initiative aimed at protecting endangered wildlife. If Program X is adopted, 600 species will go extinct. If Program Y is adopted, there is a one-third probability that no species will go extinct and a two-thirds probability that 900 species will go extinct. Which program would you choose?&quot;</span>
+    <span class="p">}</span>
+    <span class="c1"># You can add more custom scenarios here</span>
+<span class="p">]</span>
+
+<span class="c1"># Function to get a response from the model</span>
+<span class="k">def</span> <span class="nf">get_response</span><span class="p">(</span><span class="n">prompt</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span>  <span class="c1"># Use the appropriate model</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Answer the following question in a few words with the first answer you can think of. Add an explanation in 10 words or less.&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">}</span>
+        <span class="p">],</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">150</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span>
+
+<span class="c1"># Iterate through scenarios and get responses for both frames</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">scenario</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scenarios</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">scenario</span><span class="p">)</span>
+    <span class="n">gain_response</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;gain_frame&quot;</span><span class="p">])</span>
+    <span class="n">loss_response</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;loss_frame&quot;</span><span class="p">])</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scenario </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gain Frame Response: </span><span class="si">{</span><span class="n">gain_response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loss Frame Response: </span><span class="si">{</span><span class="n">loss_response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+<span class="c1"># You can extend this script by adding more scenarios and analyzing the responses</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;gain_frame&#39;: &#39;Imagine a government initiative aimed at protecting endangered wildlife. If Program X is adopted, 300 species will be saved. If Program Y is adopted, there is a one-third probability that 900 species will be saved and a two-thirds probability that no species will be saved. Which program would you choose?&#39;, &#39;loss_frame&#39;: &#39;Imagine a government initiative aimed at protecting endangered wildlife. If Program X is adopted, 600 species will go extinct. If Program Y is adopted, there is a one-third probability that no species will go extinct and a two-thirds probability that 900 species will go extinct. Which program would you choose?&#39;}
+Scenario 1:
+Gain Frame Response: Program Y. Higher expected result, more impact, worth the risk.
+Loss Frame Response: Program X. Less risk.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the scenarios for the framing effect</span>
+<span class="n">scenarios</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;gain_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine the U.S. is preparing for the outbreak of an unusual disease expected to kill 600 people. If Program A is adopted, 200 people will be saved. If Program B is adopted, there is a one-third probability that 600 people will be saved and a two-thirds probability that no one will be saved. Which program would you choose?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine the U.S. is preparing for the outbreak of an unusual disease expected to kill 600 people. If Program A is adopted, 400 people will die. If Program B is adopted, there is a one-third probability that nobody will die and a two-thirds probability that 600 people will die. Which program would you choose?&quot;</span>
+    <span class="p">},</span>
+    <span class="c1"># Add more scenarios here if needed</span>
+<span class="p">]</span>
+
+<span class="c1"># Function to get a response from the model</span>
+<span class="k">def</span> <span class="nf">get_response</span><span class="p">(</span><span class="n">prompt</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span>  <span class="c1"># Use the appropriate model</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Answer the following question in a few words with the first answer you can think of. Add an explanation in 10 words or less.&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">}</span>
+        <span class="p">],</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">150</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span>
+
+<span class="c1"># Iterate through scenarios and get responses for both frames</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">scenario</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scenarios</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">scenario</span><span class="p">)</span>
+    <span class="n">gain_response</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;gain_frame&quot;</span><span class="p">])</span>
+    <span class="n">loss_response</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;loss_frame&quot;</span><span class="p">])</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scenario </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gain Frame Response: </span><span class="si">{</span><span class="n">gain_response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loss Frame Response: </span><span class="si">{</span><span class="n">loss_response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+<span class="c1"># You can extend this script by adding more scenarios and analyzing the responses</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;gain_frame&#39;: &#39;Imagine the U.S. is preparing for the outbreak of an unusual disease expected to kill 600 people. If Program A is adopted, 200 people will be saved. If Program B is adopted, there is a one-third probability that 600 people will be saved and a two-thirds probability that no one will be saved. Which program would you choose?&#39;, &#39;loss_frame&#39;: &#39;Imagine the U.S. is preparing for the outbreak of an unusual disease expected to kill 600 people. If Program A is adopted, 400 people will die. If Program B is adopted, there is a one-third probability that nobody will die and a two-thirds probability that 600 people will die. Which program would you choose?&#39;}
+Scenario 1:
+Gain Frame Response: Program A. Guaranteed to save some lives.
+Loss Frame Response: Program A. Lower risk of death.
+</pre></div>
+</div>
+</div>
+</div>
+<p>More scenarios</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenarios</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;gain_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a city planning project aimed at reducing traffic congestion. If Plan A is adopted, 30</span><span class="si">% o</span><span class="s2">f the traffic will be reduced. If Plan B is adopted, there is a one-third probability that all traffic will be reduced and a two-thirds probability that no traffic will be reduced. Which plan would you choose?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a city planning project aimed at reducing traffic congestion. If Plan A is adopted, 70</span><span class="si">% o</span><span class="s2">f the traffic will remain. If Plan B is adopted, there is a one-third probability that no traffic will remain and a two-thirds probability that all traffic will remain. Which plan would you choose?&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;gain_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a public health campaign aimed at reducing smoking rates. If Policy A is implemented, 40</span><span class="si">% o</span><span class="s2">f smokers will quit. If Policy B is implemented, there is a one-half probability that all smokers will quit and a one-half probability that no smokers will quit. Which policy would you choose?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a public health campaign aimed at reducing smoking rates. If Policy A is implemented, 60</span><span class="si">% o</span><span class="s2">f smokers will continue smoking. If Policy B is implemented, there is a one-half probability that no smokers will continue smoking and a one-half probability that all smokers will continue smoking. Which policy would you choose?&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;gain_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a disaster relief effort aimed at providing clean water. If Strategy A is adopted, 500 people will get clean water. If Strategy B is adopted, there is a one-fourth probability that 2000 people will get clean water and a three-fourths probability that no one will get clean water. Which strategy would you choose?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a disaster relief effort aimed at providing clean water. If Strategy A is adopted, 1500 people will not get clean water. If Strategy B is adopted, there is a one-fourth probability that no one will be without clean water and a three-fourths probability that 2000 people will be without clean water. Which strategy would you choose?&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;gain_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a new technology program in schools aimed at improving math scores. If Program A is adopted, 20</span><span class="si">% o</span><span class="s2">f students will improve their scores. If Program B is adopted, there is a one-fifth probability that all students will improve their scores and a four-fifths probability that no students will improve their scores. Which program would you choose?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a new technology program in schools aimed at improving math scores. If Program A is adopted, 80</span><span class="si">% o</span><span class="s2">f students will not improve their scores. If Program B is adopted, there is a one-fifth probability that no students will fail to improve their scores and a four-fifths probability that all students will fail to improve their scores. Which program would you choose?&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;gain_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a conservation project aimed at preserving a forest. If Plan A is adopted, 100 acres of forest will be saved. If Plan B is adopted, there is a one-tenth probability that 1000 acres will be saved and a nine-tenths probability that no acres will be saved. Which plan would you choose?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a conservation project aimed at preserving a forest. If Plan A is adopted, 900 acres of forest will be lost. If Plan B is adopted, there is a one-tenth probability that no acres will be lost and a nine-tenths probability that 1000 acres will be lost. Which plan would you choose?&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;gain_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a healthcare initiative aimed at reducing diabetes. If Initiative A is implemented, 50</span><span class="si">% o</span><span class="s2">f at-risk individuals will avoid diabetes. If Initiative B is implemented, there is a one-third probability that all at-risk individuals will avoid diabetes and a two-thirds probability that no one will avoid diabetes. Which initiative would you choose?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a healthcare initiative aimed at reducing diabetes. If Initiative A is implemented, 50</span><span class="si">% o</span><span class="s2">f at-risk individuals will develop diabetes. If Initiative B is implemented, there is a one-third probability that no at-risk individuals will develop diabetes and a two-thirds probability that all will develop diabetes. Which initiative would you choose?&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;gain_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a company policy aimed at improving employee satisfaction. If Policy A is adopted, 60</span><span class="si">% o</span><span class="s2">f employees will report increased satisfaction. If Policy B is adopted, there is a one-fourth probability that all employees will report increased satisfaction and a three-fourths probability that no employees will report increased satisfaction. Which policy would you choose?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a company policy aimed at improving employee satisfaction. If Policy A is adopted, 40</span><span class="si">% o</span><span class="s2">f employees will not report increased satisfaction. If Policy B is adopted, there is a one-fourth probability that no employees will be dissatisfied and a three-fourths probability that all employees will be dissatisfied. Which policy would you choose?&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;gain_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a new training program aimed at reducing workplace accidents. If Program A is adopted, 30</span><span class="si">% o</span><span class="s2">f accidents will be prevented. If Program B is adopted, there is a one-fifth probability that all accidents will be prevented and a four-fifths probability that no accidents will be prevented. Which program would you choose?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a new training program aimed at reducing workplace accidents. If Program A is adopted, 70</span><span class="si">% o</span><span class="s2">f accidents will still occur. If Program B is adopted, there is a one-fifth probability that no accidents will occur and a four-fifths probability that all accidents will occur. Which program would you choose?&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;gain_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a marketing strategy aimed at increasing product sales. If Strategy A is adopted, sales will increase by 20%. If Strategy B is adopted, there is a one-half probability that sales will double and a one-half probability that sales will not increase. Which strategy would you choose?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a marketing strategy aimed at increasing product sales. If Strategy A is adopted, sales will not increase by 80%. If Strategy B is adopted, there is a one-half probability that sales will double and a one-half probability that sales will not increase at all. Which strategy would you choose?&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;gain_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a public safety program aimed at reducing crime rates. If Program A is adopted, crime rates will decrease by 10%. If Program B is adopted, there is a one-third probability that crime rates will decrease by 30</span><span class="si">% a</span><span class="s2">nd a two-thirds probability that crime rates will not decrease. Which program would you choose?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loss_frame&quot;</span><span class="p">:</span> <span class="s2">&quot;Imagine a public safety program aimed at reducing crime rates. If Program A is adopted, crime rates will not decrease by 90%. If Program B is adopted, there is a one-third probability that crime rates will decrease by 30</span><span class="si">% a</span><span class="s2">nd a two-thirds probability that crime rates will not decrease at all. Which program would you choose?&quot;</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="c1"># Function to get a response from the model</span>
+<span class="k">def</span> <span class="nf">get_response</span><span class="p">(</span><span class="n">prompt</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span>  <span class="c1"># Use the appropriate model</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Answer the following question in a few words with the first answer you can think of. Add an explanation in 10 words or less.&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">}</span>
+        <span class="p">],</span>
+        <span class="n">max_tokens</span><span class="o">=</span><span class="mi">150</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span>
+
+<span class="c1"># Iterate through scenarios and get responses for both frames</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">scenario</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scenarios</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">scenario</span><span class="p">)</span>
+    <span class="n">gain_response</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;gain_frame&quot;</span><span class="p">])</span>
+    <span class="n">loss_response</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="n">scenario</span><span class="p">[</span><span class="s2">&quot;loss_frame&quot;</span><span class="p">])</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scenario </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gain Frame Response: </span><span class="si">{</span><span class="n">gain_response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loss Frame Response: </span><span class="si">{</span><span class="n">loss_response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+<span class="c1"># You can extend this script by adding more scenarios and analyzing the responses</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;gain_frame&#39;: &#39;Imagine a city planning project aimed at reducing traffic congestion. If Plan A is adopted, 30% of the traffic will be reduced. If Plan B is adopted, there is a one-third probability that all traffic will be reduced and a two-thirds probability that no traffic will be reduced. Which plan would you choose?&#39;, &#39;loss_frame&#39;: &#39;Imagine a city planning project aimed at reducing traffic congestion. If Plan A is adopted, 70% of the traffic will remain. If Plan B is adopted, there is a one-third probability that no traffic will remain and a two-thirds probability that all traffic will remain. Which plan would you choose?&#39;}
+Scenario 1:
+Gain Frame Response: Plan B. Higher potential impact on reducing traffic congestion.
+Loss Frame Response: Plan A. More likely to reduce traffic compared to Plan B.
+
+{&#39;gain_frame&#39;: &#39;Imagine a public health campaign aimed at reducing smoking rates. If Policy A is implemented, 40% of smokers will quit. If Policy B is implemented, there is a one-half probability that all smokers will quit and a one-half probability that no smokers will quit. Which policy would you choose?&#39;, &#39;loss_frame&#39;: &#39;Imagine a public health campaign aimed at reducing smoking rates. If Policy A is implemented, 60% of smokers will continue smoking. If Policy B is implemented, there is a one-half probability that no smokers will continue smoking and a one-half probability that all smokers will continue smoking. Which policy would you choose?&#39;}
+Scenario 2:
+Gain Frame Response: Policy B. Higher potential impact with uncertainty.
+Loss Frame Response: Policy B - Higher potential impact with binary outcome.
+
+{&#39;gain_frame&#39;: &#39;Imagine a disaster relief effort aimed at providing clean water. If Strategy A is adopted, 500 people will get clean water. If Strategy B is adopted, there is a one-fourth probability that 2000 people will get clean water and a three-fourths probability that no one will get clean water. Which strategy would you choose?&#39;, &#39;loss_frame&#39;: &#39;Imagine a disaster relief effort aimed at providing clean water. If Strategy A is adopted, 1500 people will not get clean water. If Strategy B is adopted, there is a one-fourth probability that no one will be without clean water and a three-fourths probability that 2000 people will be without clean water. Which strategy would you choose?&#39;}
+Scenario 3:
+Gain Frame Response: Strategy A: 500 people get clean water.
+
+Explanation: Guaranteed impact compared to uncertain outcome of Strategy B.
+Loss Frame Response: Strategy B. More likely for all to have clean water.
+
+{&#39;gain_frame&#39;: &#39;Imagine a new technology program in schools aimed at improving math scores. If Program A is adopted, 20% of students will improve their scores. If Program B is adopted, there is a one-fifth probability that all students will improve their scores and a four-fifths probability that no students will improve their scores. Which program would you choose?&#39;, &#39;loss_frame&#39;: &#39;Imagine a new technology program in schools aimed at improving math scores. If Program A is adopted, 80% of students will not improve their scores. If Program B is adopted, there is a one-fifth probability that no students will fail to improve their scores and a four-fifths probability that all students will fail to improve their scores. Which program would you choose?&#39;}
+Scenario 4:
+Gain Frame Response: Program B. Higher chance of all students improving scores.
+Loss Frame Response: Program B. Higher chance for success overall.
+
+{&#39;gain_frame&#39;: &#39;Imagine a conservation project aimed at preserving a forest. If Plan A is adopted, 100 acres of forest will be saved. If Plan B is adopted, there is a one-tenth probability that 1000 acres will be saved and a nine-tenths probability that no acres will be saved. Which plan would you choose?&#39;, &#39;loss_frame&#39;: &#39;Imagine a conservation project aimed at preserving a forest. If Plan A is adopted, 900 acres of forest will be lost. If Plan B is adopted, there is a one-tenth probability that no acres will be lost and a nine-tenths probability that 1000 acres will be lost. Which plan would you choose?&#39;}
+Scenario 5:
+Gain Frame Response: Plan A - guaranteed 100 acres saved.
+Plan A is a safer bet than Plan B.
+Loss Frame Response: Plan B. Higher chance of saving forest.
+
+{&#39;gain_frame&#39;: &#39;Imagine a healthcare initiative aimed at reducing diabetes. If Initiative A is implemented, 50% of at-risk individuals will avoid diabetes. If Initiative B is implemented, there is a one-third probability that all at-risk individuals will avoid diabetes and a two-thirds probability that no one will avoid diabetes. Which initiative would you choose?&#39;, &#39;loss_frame&#39;: &#39;Imagine a healthcare initiative aimed at reducing diabetes. If Initiative A is implemented, 50% of at-risk individuals will develop diabetes. If Initiative B is implemented, there is a one-third probability that no at-risk individuals will develop diabetes and a two-thirds probability that all will develop diabetes. Which initiative would you choose?&#39;}
+Scenario 6:
+Gain Frame Response: Initiative A. Higher chance of success for individuals at risk.
+Loss Frame Response: Initiative B. Higher chance of preventing disease overall.
+
+{&#39;gain_frame&#39;: &#39;Imagine a company policy aimed at improving employee satisfaction. If Policy A is adopted, 60% of employees will report increased satisfaction. If Policy B is adopted, there is a one-fourth probability that all employees will report increased satisfaction and a three-fourths probability that no employees will report increased satisfaction. Which policy would you choose?&#39;, &#39;loss_frame&#39;: &#39;Imagine a company policy aimed at improving employee satisfaction. If Policy A is adopted, 40% of employees will not report increased satisfaction. If Policy B is adopted, there is a one-fourth probability that no employees will be dissatisfied and a three-fourths probability that all employees will be dissatisfied. Which policy would you choose?&#39;}
+Scenario 7:
+Gain Frame Response: Policy A. Higher chance of satisfaction for majority of employees.
+Loss Frame Response: Policy A. Higher chance of satisfaction among employees.
+
+{&#39;gain_frame&#39;: &#39;Imagine a new training program aimed at reducing workplace accidents. If Program A is adopted, 30% of accidents will be prevented. If Program B is adopted, there is a one-fifth probability that all accidents will be prevented and a four-fifths probability that no accidents will be prevented. Which program would you choose?&#39;, &#39;loss_frame&#39;: &#39;Imagine a new training program aimed at reducing workplace accidents. If Program A is adopted, 70% of accidents will still occur. If Program B is adopted, there is a one-fifth probability that no accidents will occur and a four-fifths probability that all accidents will occur. Which program would you choose?&#39;}
+Scenario 8:
+Gain Frame Response: Program A. Higher probability of preventing accidents.
+Loss Frame Response: Program A. More consistent accident reduction results.
+
+{&#39;gain_frame&#39;: &#39;Imagine a marketing strategy aimed at increasing product sales. If Strategy A is adopted, sales will increase by 20%. If Strategy B is adopted, there is a one-half probability that sales will double and a one-half probability that sales will not increase. Which strategy would you choose?&#39;, &#39;loss_frame&#39;: &#39;Imagine a marketing strategy aimed at increasing product sales. If Strategy A is adopted, sales will not increase by 80%. If Strategy B is adopted, there is a one-half probability that sales will double and a one-half probability that sales will not increase at all. Which strategy would you choose?&#39;}
+Scenario 9:
+Gain Frame Response: Strategy B. Higher potential gain with equal probability of success.
+Loss Frame Response: Strategy B. Higher chance of doubling sales. Potential for growth.
+
+{&#39;gain_frame&#39;: &#39;Imagine a public safety program aimed at reducing crime rates. If Program A is adopted, crime rates will decrease by 10%. If Program B is adopted, there is a one-third probability that crime rates will decrease by 30% and a two-thirds probability that crime rates will not decrease. Which program would you choose?&#39;, &#39;loss_frame&#39;: &#39;Imagine a public safety program aimed at reducing crime rates. If Program A is adopted, crime rates will not decrease by 90%. If Program B is adopted, there is a one-third probability that crime rates will decrease by 30% and a two-thirds probability that crime rates will not decrease at all. Which program would you choose?&#39;}
+Scenario 10:
+Gain Frame Response: Program A. Guaranteed decrease in crime rates by 10%.
+Loss Frame Response: Program B. Higher chance for a significant decrease in crime.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./04-cognitive-biases"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../03-sae/sae.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Sparse Autoencoders &amp; Superposition</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../00-basic-concepts/01-fourier-transform.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Frequency-Domain Analysis and Fourier Transforms</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Dani Balcells
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
